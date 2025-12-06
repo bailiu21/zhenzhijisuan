@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>针织产量计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 10px;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #4a86e8;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 15px;
+        }
+        
+        .section {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #4a86e8;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .step-number {
+            background: #4a86e8;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        
+        .input-group {
+            margin-bottom: 12px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+            font-size: 13px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white;
+        }
+        
+        input:focus, select:focus {
+            border-color: #4a86e8;
+            outline: none;
+        }
+        
+        .fixed-value {
+            padding: 8px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            color: #333;
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .btn-group button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .example-btn {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .example-btn:hover {
+            background: #e67e22;
+        }
+        
+        .material-section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .material-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .material-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .spandex-option {
+            display: none;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #eee;
+        }
+        
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+        
+        .empty-tip {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 13px;
+            border: 1px dashed #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .calculate-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .calculate-btn:hover {
+            background: #219653;
+        }
+        
+        .add-btn-container {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .add-btn {
+            background: #4a86e8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .add-btn:hover {
+            background: #3a76d8;
+        }
+        
+        .result-container {
+            background: #e8f4fc;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid #c3d9f7;
+            display: none;
+        }
+        
+        .result-text {
+            white-space: pre-line;
+            line-height: 1.6;
+            font-size: 14px;
+            color: #333;
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 16px;
+            color: #4a86e8;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .mode-option {
+            flex: 1;
+        }
+        
+        .mode-radio {
+            display: none;
+        }
+        
+        .mode-label {
+            display: block;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .mode-radio:checked + .mode-label {
+            border-color: #4a86e8;
+            background-color: #e8f0ff;
+            color: #4a86e8;
+        }
+        
+        .format-tip {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #856404;
+            display: none;
+        }
+        
+        .component-result {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            display: none;
+        }
+        
+        .component-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        
+        .component-table th, .component-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .component-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .content {
+                padding: 10px;
+            }
+            
+            .section {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .material-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .mode-selector {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>针织计算器</h1>
+            <div class="subtitle">快速计算生产参数</div>
+        </div>
+        
+        <div class="content">
+            <!-- 计算模式选择 -->
+            <div class="section">
+                <div class="section-title">
+                    <span class="step-number">0</span> 计算模式
+                </div>
+                
+                <div class="mode-selector">
+                    <div class="mode-option">
+                        <input type="radio" id="modeNormal" name="calculationMode" class="mode-radio" value="normal" checked>
+                        <label for="modeNormal" class="mode-label">普通计算<br><small>仅计算纱线比例</small></label>
+                    </div>
+                    <div class="mode-option">
+                        <input type="radio" id="modeComponent" name="calculationMode" class="mode-radio" value="component">
+                        <label for="modeComponent" class="mode-label">成分计算<br><small>计算纱线和成分比例</small></label>
+                    </div>
+                </div>
+                
+                <div id="formatTip" class="format-tip">
+                    <strong>注意：</strong>选择"成分计算"时，原料名称需严格按照以下格式填写：<br>
+                    1. 单一成分：直接写成分名称，如"棉"、"涤纶"、"氨纶"<br>
+                    2. 混纺成分：格式为"成分A/成分B 比例A/比例B"，如"T/R 70/30"<br>
+                    3. 特殊名称：酷丝绵→涤纶，仿棉→涤纶，天丝→莱赛尔，人棉→粘胶<br>
+                    4. 支持多成分混纺，如"T/R/C 50/30/20"
+                </div>
+            </div>
+            
+            <!-- 步骤1：机器参数 -->
+            <div class="section">
+                <div class="section-title">
+                    <span class="step-number">1</span> 机器参数
+                </div>
+                
+                <div class="input-group">
+                    <label for="totalNeedles">总针数</label>
+                    <input type="number" id="totalNeedles" placeholder="请输入总针数" value="2640">
+                </div>
+                
+                <div class="input-group">
+                    <label for="totalCoursesInput">总路数</label>
+                    <input type="number" id="totalCoursesInput" placeholder="请输入总路数" value="72">
+                </div>
+                
+                <div class="input-group">
+                    <label for="actualCourses">机器实际开的路数</label>
+                    <input type="number" id="actualCourses" placeholder="请输入机器开的路数" value="72">
+                </div>
+                
+                <div class="input-group">
+                    <label>转速</label>
+                    <div class="fixed-value">20转/分钟</div>
+                </div>
+            </div>
+            
+            <!-- 步骤2：原料信息 -->
+            <div class="section">
+                <div class="section-title">
+                    <span class="step-number">2</span> 原料信息
+                </div>
+                
+                <!-- 加载示例数据按钮 -->
+                <div class="btn-group">
+                    <button class="example-btn" id="exampleBtn">加载示例数据</button>
+                </div>
+                
+                <div id="materialsContainer">
+                    <!-- 原料列表 -->
+                </div>
+                
+                <div id="emptyMaterialsTip" class="empty-tip">
+                    暂无原料，点击下方"添加原料"按钮添加
+                </div>
+                
+                <!-- 添加原料按钮（放在原料列表下方） -->
+                <div class="add-btn-container">
+                    <button class="add-btn" id="addMaterialBtn">+ 添加原料</button>
+                </div>
+            </div>
+            
+            <!-- 步骤3：布匹信息 -->
+            <div class="section">
+                <div class="section-title">
+                    <span class="step-number">3</span> 布匹信息
+                </div>
+                
+                <div class="input-group">
+                    <label for="clothWeight">一匹布重量 (kg)</label>
+                    <input type="number" id="clothWeight" placeholder="请输入布匹重量" value="30">
+                </div>
+            </div>
+            
+            <!-- 计算按钮 -->
+            <button class="calculate-btn" id="calculateBtn">开始计算</button>
+            
+            <!-- 结果区域 -->
+            <div id="resultContainer" class="result-container">
+                <div id="resultText" class="result-text"></div>
+                <div id="componentResult" class="component-result">
+                    <h3>成分比例：</h3>
+                    <table id="componentTable" class="component-table">
+                        <thead>
+                            <tr>
+                                <th>成分</th>
+                                <th>中文名</th>
+                                <th>比例</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 成分数据将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 汇总信息 -->
+            <div id="summaryInfo" class="summary" style="display: none;">
+                <div class="summary-item">
+                    <div class="summary-value" id="totalMaterialsCount">0</div>
+                    <div>原料总数</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="shortMaterialsCount">0</div>
+                    <div>短纤</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="longMaterialsCount">0</div>
+                    <div>长纤</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="spandexMaterialsCount">0</div>
+                    <div>氨纶</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 存储原料数据
+        let materials = [];
+        let materialIdCounter = 0;
+        
+        // 成分映射表
+        const componentMap = {
+            // 标准缩写
+            'C': '棉',
+            'T': '涤纶',
+            'R': '粘胶',
+            'Sp': '氨纶',
+            'A': '腈纶',
+            'N': '锦纶',
+            'L': '亚麻',
+            'W': '羊毛',
+            'LY': '莱赛尔',
+            'MD': '莫代尔',
+            'CA': '醋酸',
+            
+            // 特殊名称映射
+            '酷丝绵': 'T',
+            '仿棉': 'T',
+            '天丝': 'LY',
+            '莫代尔': 'MD',
+            '醋酸': 'CA',
+            '人棉': 'R',
+            '人丝': 'R',
+            '涤纶': 'T',
+            '氨纶': 'Sp',
+            '粘胶': 'R',
+            '棉': 'C',
+            '腈纶': 'A',
+            '锦纶': 'N',
+            '亚麻': 'L',
+            '羊毛': 'W',
+            '莱赛尔': 'LY',
+            '莱塞尔': 'LY'
+        };
+        
+        // 成分中文名映射
+        const componentChineseMap = {
+            'C': '棉',
+            'T': '涤纶',
+            'R': '粘胶',
+            'Sp': '氨纶',
+            'A': '腈纶',
+            'N': '锦纶',
+            'L': '亚麻',
+            'W': '羊毛',
+            'LY': '莱赛尔',
+            'MD': '莫代尔',
+            'CA': '醋酸'
+        };
+        
+        // DOM元素引用
+        const materialsContainer = document.getElementById('materialsContainer');
+        const emptyMaterialsTip = document.getElementById('emptyMaterialsTip');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const addMaterialBtn = document.getElementById('addMaterialBtn');
+        const exampleBtn = document.getElementById('exampleBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultText = document.getElementById('resultText');
+        const summaryInfo = document.getElementById('summaryInfo');
+        const componentResult = document.getElementById('componentResult');
+        const componentTable = document.getElementById('componentTable');
+        const formatTip = document.getElementById('formatTip');
+        const modeRadios = document.querySelectorAll('input[name="calculationMode"]');
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加一个默认原料
+            addMaterialRow();
+            updateSummary();
+            
+            // 绑定事件
+            calculateBtn.addEventListener('click', calculate);
+            addMaterialBtn.addEventListener('click', addMaterialRow);
+            exampleBtn.addEventListener('click', loadExampleData);
+            
+            // 绑定计算模式切换事件
+            modeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'component') {
+                        formatTip.style.display = 'block';
+                    } else {
+                        formatTip.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // 添加原料行
+        function addMaterialRow() {
+            const materialId = 'material_' + materialIdCounter++;
+            
+            const materialSection = document.createElement('div');
+            materialSection.className = 'material-section';
+            materialSection.id = materialId;
+            
+            materialSection.innerHTML = `
+                <div class="material-title">
+                    <span>原料 ${materials.length + 1}</span>
+                    <button class="remove-btn" onclick="removeMaterialRow('${materialId}')">删除</button>
+                </div>
+                <div class="material-row">
+                    <div>
+                        <label>类型</label>
+                        <select class="material-type">
+                            <option value="short">短纤</option>
+                            <option value="long">长纤</option>
+                            <option value="spandex">氨纶</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>名称</label>
+                        <input type="text" class="material-name" placeholder="如棉、T/R 70/30" value="棉">
+                    </div>
+                    <div>
+                        <label class="spec-label">支数/D数</label>
+                        <input type="number" class="material-spec" min="1" step="0.1" placeholder="支数/D数" value="20">
+                    </div>
+                    <div>
+                        <label>一百针线长(cm)</label>
+                        <input type="number" class="material-length" min="1" step="0.1" placeholder="一百针线长" value="16">
+                    </div>
+                    <div>
+                        <label>路数</label>
+                        <input type="number" class="material-courses" min="1" placeholder="路数" value="1">
+                    </div>
+                    <div>
+                        <label class="feeding-method-label">进纱方式</label>
+                        <select class="feeding-method">
+                            <option value="regular">常规</option>
+                            <option value="doubling">并线</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="spandex-option" id="spandexOption_${materialId}">
+                    <label>氨纶加工方式</label>
+                    <select class="spandex-method">
+                        <option value="naked">裸加</option>
+                        <option value="single">单走</option>
+                    </select>
+                </div>
+            `;
+            
+            materialsContainer.appendChild(materialSection);
+            
+            // 更新显示
+            emptyMaterialsTip.style.display = 'none';
+            
+            // 绑定类型切换事件
+            const typeSelect = materialSection.querySelector('.material-type');
+            const nameInput = materialSection.querySelector('.material-name');
+            const specInput = materialSection.querySelector('.material-spec');
+            const specLabel = materialSection.querySelector('.spec-label');
+            const feedingMethodLabel = materialSection.querySelector('.feeding-method-label');
+            const feedingMethodSelect = materialSection.querySelector('.feeding-method');
+            const spandexOption = materialSection.querySelector(`#spandexOption_${materialId}`);
+            const spandexMethodSelect = materialSection.querySelector('.spandex-method');
+            
+            // 根据类型设置默认名称和标签
+            typeSelect.addEventListener('change', function() {
+                if (this.value === 'short') {
+                    specLabel.textContent = '支数';
+                    specInput.placeholder = '支数';
+                    specInput.value = '20';
+                    nameInput.value = '棉';
+                    feedingMethodLabel.textContent = '进纱方式';
+                    feedingMethodSelect.style.display = 'block';
+                    feedingMethodSelect.parentElement.style.display = 'block';
+                    spandexOption.style.display = 'none';
+                } else if (this.value === 'long') {
+                    specLabel.textContent = 'D数';
+                    specInput.placeholder = 'D数';
+                    specInput.value = '75';
+                    nameInput.value = '涤纶';
+                    feedingMethodLabel.textContent = '进纱方式';
+                    feedingMethodSelect.style.display = 'block';
+                    feedingMethodSelect.parentElement.style.display = 'block';
+                    spandexOption.style.display = 'none';
+                } else if (this.value === 'spandex') {
+                    specLabel.textContent = 'D数';
+                    specInput.placeholder = '氨纶D数';
+                    specInput.value = '40';
+                    nameInput.value = '氨纶';
+                    feedingMethodLabel.textContent = '氨纶类型';
+                    feedingMethodSelect.style.display = 'none';
+                    feedingMethodSelect.parentElement.style.display = 'none';
+                    spandexOption.style.display = 'block'; // 显示氨纶选项行
+                }
+                updateMaterialData(materialId);
+            });
+            
+            // 绑定输入事件
+            const inputs = materialSection.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    updateMaterialData(materialId);
+                    updateSummary();
+                });
+                input.addEventListener('change', () => {
+                    updateMaterialData(materialId);
+                    updateSummary();
+                });
+            });
+            
+            // 初始化材料数据
+            updateMaterialData(materialId);
+            updateSummary();
+            
+            // 滚动到新添加的原料行
+            setTimeout(() => {
+                materialSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+        
+        // 删除原料行
+        window.removeMaterialRow = function(materialId) {
+            const materialRow = document.getElementById(materialId);
+            if (materialRow) {
+                materialRow.remove();
+                
+                // 从材料数组中移除
+                const index = materials.findIndex(m => m.id === materialId);
+                if (index !== -1) {
+                    materials.splice(index, 1);
+                }
+                
+                // 更新显示
+                if (materialsContainer.children.length === 0) {
+                    emptyMaterialsTip.style.display = 'block';
+                }
+                
+                updateSummary();
+            }
+        };
+        
+        // 更新材料数据
+        function updateMaterialData(materialId) {
+            const materialRow = document.getElementById(materialId);
+            if (!materialRow) return;
+            
+            const type = materialRow.querySelector('.material-type').value;
+            const name = materialRow.querySelector('.material-name').value;
+            const spec = parseFloat(materialRow.querySelector('.material-spec').value) || 0;
+            const length = parseFloat(materialRow.querySelector('.material-length').value) || 0;
+            const courses = parseFloat(materialRow.querySelector('.material-courses').value) || 0;
+            
+            // 获取进纱方式（对短纤和长纤有效）
+            let feedingMethod = 'regular'; // 默认常规
+            let spandexMethod = 'single'; // 默认单走
+            
+            if (type === 'short' || type === 'long') {
+                feedingMethod = materialRow.querySelector('.feeding-method').value;
+            } else if (type === 'spandex') {
+                // 对于氨纶，获取氨纶加工方式
+                spandexMethod = materialRow.querySelector('.spandex-method').value;
+            }
+            
+            // 查找或创建材料对象
+            let materialIndex = materials.findIndex(m => m.id === materialId);
+            
+            if (materialIndex === -1) {
+                // 新原料
+                materials.push({
+                    id: materialId,
+                    type: type,
+                    name: name || this.getDefaultName(type),
+                    spec: spec,
+                    length: length,
+                    courses: courses,
+                    feedingMethod: feedingMethod,
+                    spandexMethod: spandexMethod
+                });
+            } else {
+                // 更新现有原料
+                materials[materialIndex] = {
+                    id: materialId,
+                    type: type,
+                    name: name || this.getDefaultName(type),
+                    spec: spec,
+                    length: length,
+                    courses: courses,
+                    feedingMethod: feedingMethod,
+                    spandexMethod: spandexMethod
+                };
+            }
+        }
+        
+        // 获取默认名称
+        function getDefaultName(type) {
+            switch(type) {
+                case 'short': return '棉';
+                case 'long': return '涤纶';
+                case 'spandex': return '氨纶';
+                default: return '原料';
+            }
+        }
+        
+        // 更新汇总信息
+        function updateSummary() {
+            const shortCount = materials.filter(m => m.type === 'short').length;
+            const longCount = materials.filter(m => m.type === 'long').length;
+            const spandexCount = materials.filter(m => m.type === 'spandex').length;
+            const totalCount = materials.length;
+            
+            document.getElementById('totalMaterialsCount').textContent = totalCount;
+            document.getElementById('shortMaterialsCount').textContent = shortCount;
+            document.getElementById('longMaterialsCount').textContent = longCount;
+            document.getElementById('spandexMaterialsCount').textContent = spandexCount;
+            
+            if (totalCount > 0) {
+                summaryInfo.style.display = 'flex';
+            } else {
+                summaryInfo.style.display = 'none';
+            }
+        }
+        
+        // 将支数转换为D数
+        function convertYarnCountToDenier(yarnCount) {
+            if (yarnCount <= 0) return 0;
+            return 5315 / yarnCount;
+        }
+        
+        // 计算氨纶所需D数（根据伸长率计算）
+        function calculateSpandexDenier(spandexDenier) {
+            // 氨纶伸长率，按照要求改为除以3
+            const elongationRate = 3.0; // 300%伸长率
+            return spandexDenier / elongationRate;
+        }
+        
+        // 解析原料名称，获取成分和比例
+        function parseMaterialName(materialName) {
+            // 先检查特殊名称映射
+            const normalizedName = materialName.trim();
+            let components = [];
+            
+            // 如果是特殊名称，转换为标准成分
+            if (componentMap[normalizedName]) {
+                // 单一成分
+                const componentCode = componentMap[normalizedName];
+                components.push({
+                    code: componentCode,
+                    chinese: componentChineseMap[componentCode] || componentCode,
+                    ratio: 100
+                });
+            } else {
+                // 检查是否为混纺格式（包含空格和斜杠）
+                const blendPattern = /^([A-Za-z\/]+)\s+(\d+\/\d+(?:\/\d+)*)$/;
+                const match = normalizedName.match(blendPattern);
+                
+                if (match) {
+                    // 混纺成分
+                    const componentCodes = match[1].split('/');
+                    const ratios = match[2].split('/').map(Number);
+                    
+                    // 确保成分和比例数量一致
+                    if (componentCodes.length === ratios.length) {
+                        for (let i = 0; i < componentCodes.length; i++) {
+                            const code = componentCodes[i];
+                            const ratio = ratios[i];
+                            components.push({
+                                code: code,
+                                chinese: componentChineseMap[code] || code,
+                                ratio: ratio
+                            });
+                        }
+                    } else {
+                        // 格式错误，按单一成分处理
+                        const componentCode = componentMap[componentCodes[0]] || componentCodes[0];
+                        components.push({
+                            code: componentCode,
+                            chinese: componentChineseMap[componentCode] || componentCode,
+                            ratio: 100
+                        });
+                    }
+                } else {
+                    // 按单一成分处理，查找映射
+                    const componentCode = componentMap[normalizedName] || normalizedName;
+                    components.push({
+                        code: componentCode,
+                        chinese: componentChineseMap[componentCode] || componentCode,
+                        ratio: 100
+                    });
+                }
+            }
+            
+            return components;
+        }
+        
+        // 验证原料名称格式（仅用于成分计算模式）
+        function validateMaterialNames() {
+            const errors = [];
+            
+            for (let i = 0; i < materials.length; i++) {
+                const material = materials[i];
+                const components = parseMaterialName(material.name);
+                
+                // 检查成分是否有效
+                for (const comp of components) {
+                    if (!componentChineseMap[comp.code] && !componentMap[comp.code]) {
+                        errors.push(`原料${i+1} "${material.name}" 包含未知成分 "${comp.code}"`);
+                    }
+                }
+                
+                // 检查混纺比例总和是否为100（如果是混纺）
+                if (components.length > 1) {
+                    const totalRatio = components.reduce((sum, comp) => sum + comp.ratio, 0);
+                    if (Math.abs(totalRatio - 100) > 0.1) { // 允许微小误差
+                        errors.push(`原料${i+1} "${material.name}" 混纺比例总和应为100%，实际为${totalRatio}%`);
+                    }
+                }
+            }
+            
+            return errors;
+        }
+        
+        // 加载示例数据
+        function loadExampleData() {
+            // 清空现有数据
+            materialsContainer.innerHTML = '';
+            materials = [];
+            
+            // 获取当前计算模式
+            const isComponentMode = document.querySelector('input[name="calculationMode"]:checked').value === 'component';
+            
+            // 根据计算模式加载不同的示例数据
+            let exampleMaterials;
+            
+            if (isComponentMode) {
+                // 成分计算模式示例
+                exampleMaterials = [
+                    { type: 'short', name: 'T/R 70/30', spec: 20, length: 16, courses: 1, feedingMethod: 'regular' },
+                    { type: 'long', name: '涤纶', spec: 75, length: 14, courses: 1, feedingMethod: 'regular' },
+                    { type: 'spandex', name: '氨纶', spec: 40, length: 12, courses: 1, spandexMethod: 'single' }
+                ];
+            } else {
+                // 普通计算模式示例
+                exampleMaterials = [
+                    { type: 'short', name: 'TR', spec: 20, length: 16, courses: 1, feedingMethod: 'regular' },
+                    { type: 'long', name: '低弹丝', spec: 75, length: 14, courses: 1, feedingMethod: 'regular' },
+                    { type: 'spandex', name: '氨纶', spec: 40, length: 12, courses: 1, spandexMethod: 'single' }
+                ];
+            }
+            
+            exampleMaterials.forEach((mat, index) => {
+                setTimeout(() => {
+                    addMaterialRow();
+                    // 设置材料数据
+                    const materialRow = materialsContainer.lastChild;
+                    if (materialRow) {
+                        materialRow.querySelector('.material-type').value = mat.type;
+                        materialRow.querySelector('.material-name').value = mat.name;
+                        materialRow.querySelector('.material-spec').value = mat.spec;
+                        materialRow.querySelector('.material-length').value = mat.length;
+                        materialRow.querySelector('.material-courses').value = mat.courses;
+                        
+                        if (mat.type === 'short' || mat.type === 'long') {
+                            materialRow.querySelector('.feeding-method').value = mat.feedingMethod;
+                        }
+                        
+                        if (mat.type === 'spandex') {
+                            materialRow.querySelector('.spandex-method').value = mat.spandexMethod;
+                        }
+                        
+                        // 触发更新
+                        const event = new Event('change');
+                        materialRow.querySelector('.material-type').dispatchEvent(event);
+                        
+                        updateMaterialData(materialRow.id);
+                    }
+                }, index * 100);
+            });
+            
+            // 设置其他参数
+            document.getElementById('totalNeedles').value = 2640;
+            document.getElementById('totalCoursesInput').value = 72;
+            document.getElementById('actualCourses').value = 72;
+            document.getElementById('clothWeight').value = 30;
+            
+            // 更新汇总
+            setTimeout(updateSummary, 300);
+            
+            alert('示例数据已加载，点击"开始计算"查看结果。');
+        }
+        
+        // 主计算函数
+        function calculate() {
+            // 获取计算模式
+            const calculationMode = document.querySelector('input[name="calculationMode"]:checked').value;
+            const isComponentMode = calculationMode === 'component';
+            
+            // 收集机器参数
+            const totalNeedles = parseFloat(document.getElementById('totalNeedles').value);
+            const totalCoursesInput = parseFloat(document.getElementById('totalCoursesInput').value);
+            const actualCourses = parseFloat(document.getElementById('actualCourses').value);
+            const clothWeight = parseFloat(document.getElementById('clothWeight').value);
+            
+            // 验证输入
+            if (!totalNeedles || totalNeedles <= 0) {
+                alert('请输入有效的总针数！');
+                return;
+            }
+            
+            if (!totalCoursesInput || totalCoursesInput <= 0) {
+                alert('请输入有效的总路数！');
+                return;
+            }
+            
+            if (!actualCourses || actualCourses <= 0) {
+                alert('请输入有效的机器开的路数！');
+                return;
+            }
+            
+            if (!clothWeight || clothWeight <= 0) {
+                alert('请输入有效的布匹重量！');
+                return;
+            }
+            
+            if (materials.length === 0) {
+                alert('请至少添加一种原料！');
+                return;
+            }
+            
+            // 检查所有原料数据是否完整
+            let allValid = true;
+            materials.forEach((material, index) => {
+                if (!material.name || material.spec <= 0 || material.length <= 0 || material.courses <= 0) {
+                    alert(`第${index + 1}种原料信息不完整，请检查！`);
+                    allValid = false;
+                }
+            });
+            
+            if (!allValid) return;
+            
+            // 如果是成分计算模式，验证原料名称格式
+            if (isComponentMode) {
+                const validationErrors = validateMaterialNames();
+                if (validationErrors.length > 0) {
+                    alert('原料名称格式错误：\n' + validationErrors.join('\n'));
+                    return;
+                }
+            }
+            
+            // 计算总线长（用于计算平均线长）
+            // 注意：
+            // 1. 裸加氨纶不计入总线长
+            // 2. 进纱方式为"并线"的短纤和长纤不计入总线长
+            let totalLengthForAvg = 0;
+            let totalCoursesForLength = 0;
+            
+            materials.forEach(material => {
+                if (material.type === 'spandex') {
+                    // 氨纶处理：裸加不计入，单走计入
+                    if (material.spandexMethod !== 'naked') {
+                        totalLengthForAvg += material.length * material.courses;
+                        totalCoursesForLength += material.courses;
+                    }
+                } else if (material.type === 'short' || material.type === 'long') {
+                    // 短纤和长纤处理：常规计入，并线不计入
+                    if (material.feedingMethod === 'regular') {
+                        totalLengthForAvg += material.length * material.courses;
+                        totalCoursesForLength += material.courses;
+                    }
+                    // 并线不计入总线长和总路数
+                }
+            });
+            
+            if (totalCoursesForLength === 0) {
+                alert('用于计算平均线长的原料总路数不能为0！');
+                return;
+            }
+            
+            // 计算所有纱的D数之和（考虑路数，氨纶需要特殊处理）
+            // 注意：所有原料都计入总D数，包括并线的短纤和长纤
+            let totalDenier = 0;
+            materials.forEach(material => {
+                let denier;
+                if (material.type === 'short') {
+                    denier = convertYarnCountToDenier(material.spec);
+                } else if (material.type === 'long') {
+                    denier = material.spec;
+                } else if (material.type === 'spandex') {
+                    // 氨纶需要根据伸长率计算所需D数
+                    denier = calculateSpandexDenier(material.spec);
+                }
+                totalDenier += denier * material.courses;
+            });
+            
+            // 计算用于平均D数的原料总路数
+            // 注意：
+            // 1. 裸加氨纶不计入原料总路数
+            // 2. 进纱方式为"并线"的短纤和长纤不计入原料总路数
+            let totalCoursesForDenier = 0;
+            materials.forEach(material => {
+                if (material.type === 'spandex') {
+                    // 氨纶处理：裸加不计入，单走计入
+                    if (material.spandexMethod !== 'naked') {
+                        totalCoursesForDenier += material.courses;
+                    }
+                } else if (material.type === 'short' || material.type === 'long') {
+                    // 短纤和长纤处理：常规计入，并线不计入
+                    if (material.feedingMethod === 'regular') {
+                        totalCoursesForDenier += material.courses;
+                    }
+                    // 并线不计入总路数
+                }
+            });
+            
+            if (totalCoursesForDenier === 0) {
+                alert('用于计算平均D数的原料总路数不能为0！');
+                return;
+            }
+            
+            // 计算平均线长：总线长（不含裸加氨纶和并线原料） ÷ 原料总路数（不含裸加氨纶和并线原料） ÷ 2
+            const averageLength = totalLengthForAvg / totalCoursesForLength / 2;
+            
+            // 计算平均D数：总D数（含所有原料） ÷ 原料总路数（不含裸加氨纶和并线原料）
+            const averageDenier = totalDenier / totalCoursesForDenier;
+            
+            // 计算日产量：平均线长 × 平均D数 × 总针数 × 总路数（用户输入的） × 594 ÷ 1e9
+            const totalProduction = (averageLength * averageDenier * totalNeedles * totalCoursesInput * 594) / 1e9;
+            
+            // 计算匹转数：25600 ÷ 日产量 × 匹重 ÷ 总路数（用户输入的） × 实际开的路数
+            const rotationsPerCloth = 25600 / totalProduction * clothWeight * totalCoursesInput / actualCourses;
+            
+            // 计算每种原料的纱线比例
+            const yarnResults = [];
+            let totalContribution = 0;
+            
+            // 先计算总贡献量（所有原料都计入，包括并线原料）
+            materials.forEach(material => {
+                let denier;
+                if (material.type === 'short') {
+                    denier = convertYarnCountToDenier(material.spec);
+                } else if (material.type === 'long') {
+                    denier = material.spec;
+                } else if (material.type === 'spandex') {
+                    // 氨纶需要根据伸长率计算所需D数
+                    denier = calculateSpandexDenier(material.spec);
+                }
+                
+                const contribution = material.length * denier * material.courses;
+                totalContribution += contribution;
+            });
+            
+            // 计算每种原料的纱线比例
+            materials.forEach((material, index) => {
+                let denier;
+                let specText;
+                
+                if (material.type === 'short') {
+                    denier = convertYarnCountToDenier(material.spec);
+                    specText = material.spec + '支';
+                } else if (material.type === 'long') {
+                    denier = material.spec;
+                    specText = material.spec + 'D';
+                } else if (material.type === 'spandex') {
+                    // 氨纶需要根据伸长率计算所需D数
+                    denier = calculateSpandexDenier(material.spec);
+                    specText = material.spec + 'D'; // 只显示原始D数，不显示计算后的D数
+                }
+                
+                const contribution = material.length * denier * material.courses;
+                const proportion = (contribution / totalContribution * 100) || 0;
+                
+                // 根据氨纶加工方式添加备注
+                let remark = '';
+                if (material.type === 'spandex') {
+                    if (material.spandexMethod === 'naked') {
+                        remark = '(裸加)';
+                    } else {
+                        remark = '(单走)';
+                    }
+                } else if (material.type === 'short' || material.type === 'long') {
+                    // 短纤和长纤添加进纱方式备注
+                    if (material.feedingMethod === 'doubling') {
+                        remark = '(并线)';
+                    } else {
+                        remark = '(常规)';
+                    }
+                }
+                
+                yarnResults.push({
+                    name: material.name,
+                    spec: specText,
+                    length: material.length,
+                    courses: material.courses,
+                    proportion: proportion,
+                    remark: remark
+                });
+            });
+            
+            // 构建结果字符串
+            let resultContent = `总路数${totalCoursesInput}路，机器开${actualCourses}路，总针数${totalNeedles}的机台正常开20转的情况下日产量为${totalProduction.toFixed(2)}kg，一匹布转数为${rotationsPerCloth.toFixed(0)}。\n\n`;
+            
+            // 添加平均D数和平均线长显示
+            resultContent += `平均线长：${averageLength.toFixed(4)}cm（计算总线长：${totalLengthForAvg.toFixed(2)}cm，计算总路数：${totalCoursesForLength}路）\n`;
+            resultContent += `平均D数：${averageDenier.toFixed(2)}D（计算总D数：${totalDenier.toFixed(2)}D，计算总路数：${totalCoursesForDenier}路）\n\n`;
+            
+            resultContent += `纱线比例：\n`;
+            
+            yarnResults.forEach((result, index) => {
+                resultContent += `${result.name} ${result.spec} ${result.remark} 一百针线长${result.length}厘米，路数${result.courses}路，比例为${result.proportion.toFixed(2)}%；\n`;
+            });
+            
+            // 显示结果
+            resultText.textContent = resultContent;
+            resultContainer.style.display = 'block';
+            
+            // 如果是成分计算模式，计算并显示成分比例
+            if (isComponentMode) {
+                // 计算成分比例
+                const componentTotals = {};
+                
+                yarnResults.forEach((yarnResult, index) => {
+                    const material = materials[index];
+                    const yarnProportion = yarnResult.proportion;
+                    
+                    // 解析原料名称，获取成分结构
+                    const components = parseMaterialName(material.name);
+                    
+                    // 分配纱线比例到各个成分
+                    components.forEach(component => {
+                        const componentProportion = yarnProportion * component.ratio / 100;
+                        
+                        if (!componentTotals[component.code]) {
+                            componentTotals[component.code] = {
+                                chinese: component.chinese,
+                                proportion: 0
+                            };
+                        }
+                        
+                        componentTotals[component.code].proportion += componentProportion;
+                    });
+                });
+                
+                // 创建成分比例表格
+                const tbody = componentTable.querySelector('tbody');
+                tbody.innerHTML = '';
+                
+                // 转换为数组并排序
+                const componentArray = Object.keys(componentTotals).map(code => ({
+                    code: code,
+                    chinese: componentTotals[code].chinese,
+                    proportion: componentTotals[code].proportion
+                }));
+                
+                // 按比例降序排序
+                componentArray.sort((a, b) => b.proportion - a.proportion);
+                
+                // 添加到表格
+                componentArray.forEach(component => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${component.code}</td>
+                        <td>${component.chinese}</td>
+                        <td>${component.proportion.toFixed(2)}%</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                // 显示成分结果
+                componentResult.style.display = 'block';
+            } else {
+                // 隐藏成分结果
+                componentResult.style.display = 'none';
+            }
+            
+            // 滚动到结果位置
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
